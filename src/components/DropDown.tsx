@@ -8,10 +8,13 @@ function DropDown() {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`https://jsonplaceholder.typicode.com/users?_limit=${count}`);
+        const res = await fetch(`https://jsonplaceholder.typicode.com/users?_limit=${count}`, {
+          signal: controller.signal
+        });
         const json = await res.json();
         setUsers(json);
       } catch (err) {
@@ -21,6 +24,7 @@ function DropDown() {
       }
     };
     fetchUsers();
+    return () => controller.abort();
   }, [count]);
 
   return (
